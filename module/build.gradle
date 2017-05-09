@@ -1,0 +1,64 @@
+static findProperty(String propertiesFile, String propertyName) {
+    if (propertiesFile != null) {
+        java.util.Properties properties = new java.util.Properties()
+        InputStream inputStream = new File(propertiesFile).newDataInputStream()
+        properties.load(inputStream)
+        def propertyValue = properties.getProperty(propertyName)
+        return propertyValue == null ? "" : propertyValue
+    }
+    return "";
+}
+
+static verifyProperties(Project project, String propertyName, String property) {
+    return findProperty(project.getProjectDir().absolutePath + '/include.properties', propertyName).split(",").contains(property)
+}
+
+boolean isApp = verifyProperties(rootProject, 'applications', name)
+
+if (isApp) {
+    apply plugin: 'com.android.application'
+} else {
+    apply plugin: 'com.android.library'
+}
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        if (isApp) {
+            applicationId "com.bamboo.component"
+        }
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main {
+            if (isApp) {
+                manifest.srcFile 'src/main/DebugAndroidManifest.xml'
+                java.srcDirs = ['src/main/java', 'src/main/java-debug']
+                res.srcDirs = ['src/main/res', 'src/main/res-debug']
+                resources.srcDirs = ['src/main/resources', 'src/main/resources-debug']
+            }
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+    testCompile 'junit:junit:4.12'
+}
