@@ -29,10 +29,10 @@ android {
 
 
     if (isApp) {
-        flavorDimensions "runTest"
+        flavorDimensions "run"
         productFlavors {
-            runTest {
-                dimension "runTest"
+            run {
+                dimension "run"
                 minSdkVersion 21
             }
         }
