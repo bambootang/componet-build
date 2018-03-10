@@ -27,13 +27,14 @@ android {
         }
     }
 
-    sourceSets {
-        main {
-            if (isApp) {
-                manifest.srcFile 'src/main/DebugAndroidManifest.xml'
-                java.srcDirs = ['src/main/java', 'src/main/java-debug']
-                res.srcDirs = ['src/main/res', 'src/main/res-debug']
-                resources.srcDirs = ['src/main/resources', 'src/main/resources-debug']
+
+
+    if (isApp) {
+        flavorDimensions "run"
+        productFlavors {
+            run {
+                dimension "run"
+                minSdkVersion 21
             }
         }
     }
@@ -48,6 +49,6 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
     testCompile 'junit:junit:4.12'
 
-//    compile project(':module')
-    compile 'com.bamboo.component:module:1.0'
+//    implementation project(':module')
+    implementation 'com.bamboo.component:module:1.0'
 }
